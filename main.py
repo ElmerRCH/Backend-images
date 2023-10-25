@@ -1,15 +1,24 @@
 from fastapi import FastAPI, UploadFile, Form, File, Response
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+import pymysql
 
 app = FastAPI()
+
+
+host = 'localhost'
+user = 'tu_usuario'
+password = 'tu_contraseña'
+database = 'tu_base_de_datos'
+db = pymysql.connect(host=host, user=user, password=password, database=database)
+
+cursor = db.cursor()
 
 class Registrar_usuario(BaseModel):
     name: str
     olds: str
     password : str
     confi_password: str
-
 
 class Login_usuario(BaseModel):
     name: str
@@ -36,3 +45,5 @@ async def login_usuario(data: Login_usuario):
     print('========================')
     if data.name == data.password:return True
     return False
+
+
