@@ -25,7 +25,7 @@ class Login_usuario(BaseModel):
     password: str
 
 class validar_img(BaseModel):
-    img: list
+    img: str
 
 app.add_middleware(
     CORSMiddleware,
@@ -50,9 +50,9 @@ async def login_usuario(data: Login_usuario):
     return False
 
 @app.post("/recibir-imagen")
-async def login_usuario(file: UploadFile = File(...)):
-    #print('========================',file)
+async def login_usuario(data: validar_img):
     print('========================')
+    #print('========================')
     
     return False
 
