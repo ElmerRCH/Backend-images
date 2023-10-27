@@ -1,8 +1,11 @@
 from fastapi import FastAPI, UploadFile, Form, File, Response
 from fastapi.middleware.cors import CORSMiddleware
+from enums.rutas import Rutas
 from pydantic import BaseModel
+import shutil
 import pymysql
 import cv2
+import os
 
 app = FastAPI()
 
@@ -25,7 +28,7 @@ class Login_usuario(BaseModel):
     password: str
 
 class validar_img(BaseModel):
-    img: str
+    img: UploadFile = File(...)
 
 app.add_middleware(
     CORSMiddleware,
@@ -34,7 +37,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
+   
 @app.get("/")
 async def root(response: Response = Response()):
     return {"message": "403 Forbidden"}
@@ -50,11 +53,21 @@ async def login_usuario(data: Login_usuario):
     return False
 
 @app.post("/recibir-imagen")
-async def login_usuario(data: validar_img):
-    print('========================')
-    #print('========================')
+async def login_usuario(image: UploadFile):
+    with open(image.filename, "wb") as file:
+        file.write(image.file.read())
+    img = cv2.imread(image.filename)
+    ruta = f'../../Login/Backend-login/{image.filename}'
+    cv2.imwrite(ruta,img)
+    path_original = ruta
+    new_path = '../../Login/imagenes'
+    print('=================')
+    shutil.copy(path_original, new_path)
+    #os.remove(image.filename)
     
-    return False
+    return image.filename
+
+
 
 
 
