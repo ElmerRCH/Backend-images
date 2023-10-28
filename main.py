@@ -1,5 +1,7 @@
 from fastapi import FastAPI, UploadFile, Form, File, Response
+from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from enums.rutas import Rutas
 from pydantic import BaseModel
 import shutil
@@ -8,6 +10,7 @@ import cv2
 import os
 
 app = FastAPI()
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 #host = 'localhost'
 #user = 'tu_usuario'
@@ -37,7 +40,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-   
+
 @app.get("/")
 async def root(response: Response = Response()):
     return {"message": "403 Forbidden"}
@@ -57,14 +60,12 @@ async def login_usuario(image: UploadFile):
     with open(image.filename, "wb") as file:
         file.write(image.file.read())
     img = cv2.imread(image.filename)
-    ruta = f'../../Login/Backend-login/{image.filename}'
-    cv2.imwrite(ruta,img)
-    path_original = ruta
-    new_path = '../../Login/imagenes'
-    print('=================')
-    shutil.copy(path_original, new_path)
-    #os.remove(image.filename)
     
+    ruta = f'static/{image.filename}'
+    
+    cv2.imwrite(ruta,img)
+    os.remove(image.filename)
+    print(FileResponse(ruta))
     return image.filename
 
 
