@@ -4,8 +4,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from enums.rutas import Rutas
 from pydantic import BaseModel
-import shutil
-import pymysql
 import cv2
 import os
 
